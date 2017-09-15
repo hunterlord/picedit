@@ -1,28 +1,40 @@
 const webpack = require('webpack');
 const fs = require('fs');
-const prod = fs.existsSync('env.prod');
+const mode = process.env.NODE_ENV;
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const BabiliPlugin = require('babili-webpack-plugin');
 
 const css_loader_dev = [
-  { loader: 'style-loader' },
-  { loader: 'css-loader' },
-  { loader: 'postcss-loader' }
+  {
+    loader: 'style-loader'
+  },
+  {
+    loader: 'css-loader'
+  },
+  {
+    loader: 'postcss-loader'
+  }
 ];
 
 const less_loader_use = [
   {
     loader: 'style-loader',
-    options: { sourceMap: true }
+    options: {
+      sourceMap: true
+    }
   },
   {
     loader: 'css-loader',
-    options: { sourceMap: true }
+    options: {
+      sourceMap: true
+    }
   },
   {
     loader: 'postcss-loader',
-    options: { sourceMap: true }
+    options: {
+      sourceMap: true
+    }
   },
   {
     loader: 'less-loader',
@@ -45,20 +57,24 @@ const import_options = [
   // }
 ];
 
-const plugins = [
+let plugins = [
   new webpack.HotModuleReplacementPlugin(),
   new webpack.NoEmitOnErrorsPlugin(),
   new webpack.ProvidePlugin({
     'window.jQuery': 'jquery'
   }),
-  new UglifyJSPlugin(),
   new webpack.optimize.ModuleConcatenationPlugin()
 ];
 
-const css_loader_use = prod ? css_loader_prod : css_loader_dev;
+let css_loader_use = css_loader_dev;
 
-if (prod) {
-  plugins.push(new ExtractTextPlugin('styles.css'));
+if (mode === 'PROD') {
+  plugins = [
+    ...plugins,
+    new ExtractTextPlugin('styles.css'),
+    new BabiliPlugin()
+  ];
+  css_loader_use = css_loader_prod;
 }
 
 module.exports = {
@@ -66,8 +82,8 @@ module.exports = {
   entry: './index.js',
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'pubilc'),
-    publicPath: '/'
+    path: path.resolve(__dirname, 'public/assets'),
+    publicPath: '/assets/'
   },
   devServer: {
     contentBase: path.join(__dirname, 'public'),
@@ -75,7 +91,7 @@ module.exports = {
     //外网访问
     disableHostCheck: true
   },
-  devtool: 'source-map',
+  devtool: 'inline-source-map',
   module: {
     rules: [
       {
@@ -94,13 +110,6 @@ module.exports = {
         test: /\.(ttf|svg|woff2|otf|eot|woff|gif|png|jpg)$/,
         loader: 'file-loader'
       },
-      // {
-      //   enforce: 'pre',
-      //   test: /\.js$/,
-      //   exclude: /(node_modules)/,
-      //   loader: 'eslint-loader',
-      //   options: {}
-      // },
       {
         test: /\.js$/,
         exclude: /(node_modules)/,
