@@ -58,6 +58,10 @@ const import_options = [
 ];
 
 let plugins = [
+  new webpack.optimize.CommonsChunkPlugin({
+    name: 'commons',
+    filename: 'commons.js'
+  }),
   new webpack.HotModuleReplacementPlugin(),
   new webpack.NoEmitOnErrorsPlugin(),
   new webpack.ProvidePlugin({
@@ -130,7 +134,7 @@ module.exports = {
   },
   resolve: {
     alias: {
-      styles: path.resolve(__dirname, 'app/css')
+      styles: path.resolve(__dirname, 'app/assets/css')
     }
   },
   plugins: plugins
