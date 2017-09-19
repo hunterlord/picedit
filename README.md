@@ -3,6 +3,9 @@
 ```shell
 git clone https://github.com/hunterlord/webpack-start.git new-project
 cd new-project && npm i
+
+// react
+git checkout react
 ```
 
 # webpack-start
