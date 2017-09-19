@@ -80,11 +80,6 @@ let plugins = [
 
 let css_loader_use = css_loader_dev;
 
-const createFileName = (name = 'bundle') => {
-  const middleName = mode === 'PROD' ? '.[hash]' : '';
-  return `[name]${middleName}.${name}.js`;
-};
-
 if (mode === 'PROD') {
   plugins = [
     ...plugins,
@@ -100,7 +95,7 @@ module.exports = {
     main: './index.js'
   },
   output: {
-    filename: createFileName(),
+    filename: '[name].[hash].bundle.js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/'
   },
