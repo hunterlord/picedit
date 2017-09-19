@@ -61,7 +61,8 @@ const import_options = [
 let plugins = [
   new webpack.optimize.CommonsChunkPlugin({
     name: 'commons',
-    filename: 'commons.[hash].js'
+    filename: '[name].[hash].js',
+    chunks: ['main']
   }),
   new webpack.HotModuleReplacementPlugin(),
   new webpack.NoEmitOnErrorsPlugin(),
@@ -71,7 +72,9 @@ let plugins = [
   new webpack.optimize.ModuleConcatenationPlugin(),
   new HtmlWebpackPlugin({
     title: 'hunter webpack start demo',
-    template: path.resolve(__dirname, 'public/index.ejs')
+    filename: 'index.html',
+    template: path.resolve(__dirname, 'public/index.ejs'),
+    chunks: ['commons', 'main']
   })
 ];
 
