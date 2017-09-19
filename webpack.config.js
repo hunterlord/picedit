@@ -3,6 +3,7 @@ const fs = require('fs');
 const mode = process.env.NODE_ENV;
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BabiliPlugin = require('babili-webpack-plugin');
 
 const css_loader_dev = [
@@ -58,15 +59,28 @@ const import_options = [
 ];
 
 let plugins = [
+  new webpack.optimize.CommonsChunkPlugin({
+    name: 'commons',
+    filename: 'commons.[hash].js'
+  }),
   new webpack.HotModuleReplacementPlugin(),
   new webpack.NoEmitOnErrorsPlugin(),
   new webpack.ProvidePlugin({
     'window.jQuery': 'jquery'
   }),
-  new webpack.optimize.ModuleConcatenationPlugin()
+  new webpack.optimize.ModuleConcatenationPlugin(),
+  new HtmlWebpackPlugin({
+    title: 'hunter webpack start demo',
+    template: path.resolve(__dirname, 'public/index.ejs')
+  })
 ];
 
 let css_loader_use = css_loader_dev;
+
+const createFileName = (name = 'bundle') => {
+  const middleName = mode === 'PROD' ? '.[hash]' : '';
+  return `[name]${middleName}.${name}.js`;
+};
 
 if (mode === 'PROD') {
   plugins = [
@@ -79,11 +93,13 @@ if (mode === 'PROD') {
 
 module.exports = {
   context: path.resolve(__dirname, 'app'),
-  entry: './index.js',
+  entry: {
+    main: './index.js'
+  },
   output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'public/assets'),
-    publicPath: '/assets/'
+    filename: createFileName(),
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: '/'
   },
   devServer: {
     contentBase: path.join(__dirname, 'public'),
@@ -116,7 +132,7 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['es2015', 'stage-1'],
+            presets: ['env'],
             plugins: [
               'transform-runtime',
               'transform-class-properties',
@@ -129,7 +145,7 @@ module.exports = {
   },
   resolve: {
     alias: {
-      styles: path.resolve(__dirname, 'app/css')
+      styles: path.resolve(__dirname, 'app/assets/css')
     }
   },
   plugins: plugins

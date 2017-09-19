@@ -1,1 +1,3 @@
-document.body.innerHTML += 'Hello, hstart';
+import 'styles/style.css';
+
+document.body.innerHTML += '<div class="big">Hello, hstart</div>';
