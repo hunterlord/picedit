@@ -116,10 +116,11 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['es2015', 'stage-1'],
+            presets: ['env'],
             plugins: [
               'transform-runtime',
               'transform-class-properties',
+              'transform-react-jsx',
               ['import', import_options]
             ]
           }
